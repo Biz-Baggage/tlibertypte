@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { siteContentQuery, type Settings } from "@/lib/site-content";
 import { updateSiteSettings } from "@/lib/site-content.functions";
 import { Card, Field, PageHeader, PrimaryButton, inputCls } from "@/components/admin/AdminUI";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 export const Route = createFileRoute("/_authenticated/admin/company")({
   loader: ({ context }) => context.queryClient.ensureQueryData(siteContentQuery),
@@ -54,6 +55,15 @@ function CompanyPage() {
       <form onSubmit={onSubmit} className="space-y-6">
         <Card>
           <h2 className="mb-4 text-lg font-semibold">Identity</h2>
+          <div className="mb-6">
+            <ImageUpload
+              label="Company logo"
+              hint="Displayed in the header and footer. PNG with transparent background recommended."
+              aspect="logo"
+              value={form.logo_url ?? ""}
+              onChange={(url) => set("logo_url", url)}
+            />
+          </div>
           <div className="grid gap-4 md:grid-cols-2">
             <Field label="Company name">
               <input className={inputCls} value={form.company_name} onChange={(e) => set("company_name", e.target.value)} />

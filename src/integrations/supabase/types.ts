@@ -94,6 +94,7 @@ export type Database = {
           hero_image_url: string
           hero_secondary_cta: string
           id: string
+          logo_url: string
           phone: string
           phone_href: string
           services_body: string
@@ -125,6 +126,7 @@ export type Database = {
           hero_image_url?: string
           hero_secondary_cta?: string
           id?: string
+          logo_url?: string
           phone: string
           phone_href: string
           services_body?: string
@@ -156,6 +158,7 @@ export type Database = {
           hero_image_url?: string
           hero_secondary_cta?: string
           id?: string
+          logo_url?: string
           phone?: string
           phone_href?: string
           services_body?: string

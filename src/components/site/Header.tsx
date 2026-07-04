@@ -3,7 +3,7 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { siteContentQuery } from "@/lib/site-content";
-import logo from "@/assets/logo.png.asset.json";
+import defaultLogo from "@/assets/logo.png.asset.json";
 
 const nav = [
   { to: "/", label: "Home" },
@@ -16,11 +16,12 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const { data } = useSuspenseQuery(siteContentQuery);
   const companyName = data.settings?.company_name ?? "Trillion Liberty";
+  const logoSrc = data.settings?.logo_url?.trim() || defaultLogo.url;
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8">
         <Link to="/" className="flex items-center gap-3" aria-label={companyName}>
-          <img src={logo.url} alt={companyName} className="h-10 w-auto md:h-11" />
+          <img src={logoSrc} alt={companyName} className="h-10 w-auto md:h-11" />
           <span className="hidden text-xs font-medium uppercase tracking-widest text-muted-foreground sm:inline">
             Marine & Port
           </span>

@@ -97,6 +97,7 @@ const settingsUpdateSchema = z.object({
   about_body: z.string().max(4000),
   services_intro: z.string().max(300),
   services_body: z.string().max(500),
+  logo_url: z.string().max(1000).default(""),
 });
 
 export const updateSiteSettings = createServerFn({ method: "POST" })
