@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Boxes, Truck, Wrench, Cpu, Globe2 } from "lucide-react";
-import { focusAreas, services } from "@/content/site";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { siteContentQuery } from "@/lib/site-content";
 
 export const Route = createFileRoute("/services")({
+  loader: ({ context }) => context.queryClient.ensureQueryData(siteContentQuery),
   head: () => ({
     meta: [
       { title: "Services — Trillion Liberty Pte Ltd" },
@@ -26,6 +28,10 @@ export const Route = createFileRoute("/services")({
 const icons = [Boxes, Globe2, Truck, Wrench, Cpu];
 
 function ServicesPage() {
+  const { data } = useSuspenseQuery(siteContentQuery);
+  const s = data.settings;
+  if (!s) return null;
+  const { focusAreas, services } = data;
   return (
     <>
       <section className="bg-primary text-primary-foreground">
@@ -34,25 +40,25 @@ function ServicesPage() {
             What we do
           </p>
           <h1 className="mt-3 max-w-3xl text-4xl font-bold md:text-5xl">
-            End-to-end supply and service for marine & port operations
+            {s.services_intro}
           </h1>
           <p className="mt-6 max-w-2xl text-primary-foreground/80">
-            One accountable partner for procurement, delivery, commissioning and after-sales support.
+            {s.services_body}
           </p>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-20 md:px-8">
         <div className="grid gap-6 md:grid-cols-2">
-          {services.map((s, i) => {
+          {services.map((svc, i) => {
             const Icon = icons[i] ?? Wrench;
             return (
-              <article key={s.title} className="rounded-xl border border-border bg-card p-8">
+              <article key={svc.id} className="rounded-xl border border-border bg-card p-8">
                 <span className="grid h-12 w-12 place-items-center rounded-md bg-primary/10 text-primary">
                   <Icon className="h-6 w-6" />
                 </span>
-                <h2 className="mt-5 text-xl font-bold">{s.title}</h2>
-                <p className="mt-2 text-sm text-muted-foreground">{s.body}</p>
+                <h2 className="mt-5 text-xl font-bold">{svc.title}</h2>
+                <p className="mt-2 text-sm text-muted-foreground">{svc.body}</p>
               </article>
             );
           })}
@@ -64,7 +70,7 @@ function ServicesPage() {
           <h2 className="text-3xl font-bold">Product categories we serve</h2>
           <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {focusAreas.map((f) => (
-              <div key={f.slug} className="rounded-lg border border-border bg-card p-5">
+              <div key={f.id} className="rounded-lg border border-border bg-card p-5">
                 <p className="font-semibold text-primary">{f.title}</p>
                 <p className="mt-1 text-sm text-muted-foreground">{f.blurb}</p>
               </div>

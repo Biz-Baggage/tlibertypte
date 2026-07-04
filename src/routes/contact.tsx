@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { useState } from "react";
-import { company, focusAreas } from "@/content/site";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { siteContentQuery } from "@/lib/site-content";
 
 export const Route = createFileRoute("/contact")({
+  loader: ({ context }) => context.queryClient.ensureQueryData(siteContentQuery),
   head: () => ({
     meta: [
       { title: "Contact — Trillion Liberty Pte Ltd" },
@@ -25,14 +27,19 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
+  const { data } = useSuspenseQuery(siteContentQuery);
+  const s = data.settings;
+  const focusAreas = data.focusAreas;
   const [form, setForm] = useState({
     name: "",
     company: "",
     email: "",
     phone: "",
-    category: focusAreas[0].title,
+    category: focusAreas[0]?.title ?? "General",
     message: "",
   });
+
+  if (!s) return null;
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +47,7 @@ function ContactPage() {
     const body = encodeURIComponent(
       `Name: ${form.name}\nCompany: ${form.company}\nEmail: ${form.email}\nPhone: ${form.phone}\nCategory: ${form.category}\n\nRequirement:\n${form.message}`,
     );
-    window.location.href = `mailto:${company.email}?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${s.email}?subject=${subject}&body=${body}`;
   };
 
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
@@ -69,18 +76,18 @@ function ContactPage() {
             <ul className="mt-4 space-y-4 text-sm">
               <li className="flex gap-3">
                 <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-accent-teal" />
-                <span>{company.address}</span>
+                <span>{s.address}</span>
               </li>
               <li className="flex gap-3">
                 <Mail className="mt-0.5 h-5 w-5 shrink-0 text-accent-teal" />
-                <a href={`mailto:${company.email}`} className="hover:underline">{company.email}</a>
+                <a href={`mailto:${s.email}`} className="hover:underline">{s.email}</a>
               </li>
               <li className="flex gap-3">
                 <Phone className="mt-0.5 h-5 w-5 shrink-0 text-accent-teal" />
-                <a href={company.phoneHref} className="hover:underline">{company.phone}</a>
+                <a href={s.phone_href} className="hover:underline">{s.phone}</a>
               </li>
             </ul>
-            <p className="mt-6 text-xs text-muted-foreground">UEN: {company.uen}</p>
+            <p className="mt-6 text-xs text-muted-foreground">UEN: {s.uen}</p>
           </div>
 
           <div className="rounded-xl border border-border bg-secondary/50 p-6 text-sm">
@@ -109,7 +116,7 @@ function ContactPage() {
             <Field label="Category" className="md:col-span-2">
               <select value={form.category} onChange={(e) => set("category", e.target.value)} className={inputCls}>
                 {focusAreas.map((f) => (
-                  <option key={f.slug} value={f.title}>{f.title}</option>
+                  <option key={f.id} value={f.title}>{f.title}</option>
                 ))}
                 <option value="Other">Other</option>
               </select>
@@ -132,7 +139,7 @@ function ContactPage() {
             Send Request
           </button>
           <p className="mt-3 text-xs text-muted-foreground">
-            Submitting opens your email client with the message pre-filled to {company.email}.
+            Submitting opens your email client with the message pre-filled to {s.email}.
           </p>
         </form>
       </section>

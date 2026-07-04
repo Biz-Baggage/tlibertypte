@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2 } from "lucide-react";
-import { company, focusAreas } from "@/content/site";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { siteContentQuery } from "@/lib/site-content";
 
 export const Route = createFileRoute("/about")({
+  loader: ({ context }) => context.queryClient.ensureQueryData(siteContentQuery),
   head: () => ({
     meta: [
       { title: "About — Trillion Liberty Pte Ltd" },
@@ -24,6 +26,10 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
+  const { data } = useSuspenseQuery(siteContentQuery);
+  const s = data.settings;
+  if (!s) return null;
+  const focusAreas = data.focusAreas;
   return (
     <>
       <section className="bg-primary text-primary-foreground">
@@ -35,10 +41,7 @@ function AboutPage() {
             Empowering ports. Supporting ships. Trading with integrity.
           </h1>
           <p className="mt-6 max-w-2xl text-primary-foreground/80">
-            {company.name} is a Singapore-registered supplier of marine and port
-            equipment. We help ship owners, port operators, diving contractors
-            and industrial teams source the right equipment, delivered on time
-            and to specification.
+            {s.about_body || `${s.company_name} is a Singapore-registered supplier of marine and port equipment.`}
           </p>
         </div>
       </section>
@@ -62,29 +65,29 @@ function AboutPage() {
           <dl className="mt-4 space-y-3 text-sm">
             <div>
               <dt className="text-muted-foreground">Legal name</dt>
-              <dd className="font-medium">{company.name}</dd>
+              <dd className="font-medium">{s.company_name}</dd>
             </div>
             <div>
               <dt className="text-muted-foreground">UEN</dt>
-              <dd className="font-medium">{company.uen}</dd>
+              <dd className="font-medium">{s.uen}</dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Address</dt>
-              <dd className="font-medium">{company.address}</dd>
+              <dd className="font-medium">{s.address}</dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Email</dt>
               <dd className="font-medium">
-                <a href={`mailto:${company.email}`} className="hover:underline">
-                  {company.email}
+                <a href={`mailto:${s.email}`} className="hover:underline">
+                  {s.email}
                 </a>
               </dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Phone</dt>
               <dd className="font-medium">
-                <a href={company.phoneHref} className="hover:underline">
-                  {company.phone}
+                <a href={s.phone_href} className="hover:underline">
+                  {s.phone}
                 </a>
               </dd>
             </div>
@@ -114,7 +117,7 @@ function AboutPage() {
         <h2 className="text-3xl font-bold">What we cover</h2>
         <ul className="mt-8 grid gap-3 md:grid-cols-2">
           {focusAreas.map((f) => (
-            <li key={f.slug} className="flex items-start gap-3 rounded-md border border-border bg-card p-4">
+            <li key={f.id} className="flex items-start gap-3 rounded-md border border-border bg-card p-4">
               <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-accent-teal" />
               <div>
                 <p className="font-semibold">{f.title}</p>
