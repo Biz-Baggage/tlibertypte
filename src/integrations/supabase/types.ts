@@ -91,6 +91,7 @@ export type Database = {
           focus_heading: string
           focus_subheading: string
           hero_eyebrow: string
+          hero_image_url: string
           hero_secondary_cta: string
           id: string
           phone: string
@@ -121,6 +122,7 @@ export type Database = {
           focus_heading?: string
           focus_subheading?: string
           hero_eyebrow?: string
+          hero_image_url?: string
           hero_secondary_cta?: string
           id?: string
           phone: string
@@ -151,6 +153,7 @@ export type Database = {
           focus_heading?: string
           focus_subheading?: string
           hero_eyebrow?: string
+          hero_image_url?: string
           hero_secondary_cta?: string
           id?: string
           phone?: string
