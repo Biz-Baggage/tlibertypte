@@ -19,14 +19,20 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
 });
 
-const nav = [
+type NavItem = {
+  to: "/admin" | "/admin/company" | "/admin/home" | "/admin/focus-areas" | "/admin/services" | "/admin/account";
+  label: string;
+  icon: typeof LayoutDashboard;
+  exact?: boolean;
+};
+const nav: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/company", label: "Company info", icon: Building2 },
   { to: "/admin/home", label: "Home page", icon: HomeIcon },
   { to: "/admin/focus-areas", label: "Focus areas", icon: Grid3x3 },
   { to: "/admin/services", label: "Services", icon: Wrench },
   { to: "/admin/account", label: "Account", icon: UserCircle2 },
-] as const;
+];
 
 function AdminLayout() {
   const { data: role } = useSuspenseQuery(myRoleQuery);
