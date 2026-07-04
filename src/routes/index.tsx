@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2, Ship, Wrench, ShieldCheck, Globe2 } from "lucide-react";
-import { company, focusAreas, heroImage, stats, testimonials, whyUs } from "@/content/site";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { siteContentQuery } from "@/lib/site-content";
 
 export const Route = createFileRoute("/")({
+  loader: ({ context }) => context.queryClient.ensureQueryData(siteContentQuery),
   head: () => ({
     meta: [
       { title: "Trillion Liberty — Marine & Port Equipment Suppliers Singapore" },
@@ -19,11 +21,15 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { data } = useSuspenseQuery(siteContentQuery);
+  const s = data.settings;
+  if (!s) return null;
+  const { focusAreas, stats, whyUs, testimonials } = data;
   return (
     <>
       <section className="relative isolate overflow-hidden bg-primary text-primary-foreground">
         <img
-          src={heroImage}
+          src={s.hero_image_url}
           alt="Container ship docked at port at blue hour"
           width={1920}
           height={1080}
@@ -33,13 +39,13 @@ function Index() {
         <div className="relative mx-auto grid max-w-7xl gap-8 px-4 py-24 md:grid-cols-12 md:px-8 md:py-36">
           <div className="md:col-span-8">
             <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary-foreground/20 bg-primary-foreground/10 px-3 py-1 text-xs font-medium uppercase tracking-widest text-primary-foreground/80">
-              <Ship className="h-3.5 w-3.5" /> Singapore · Global reach
+              <Ship className="h-3.5 w-3.5" /> {s.hero_eyebrow}
             </p>
             <h1 className="text-4xl font-bold leading-tight md:text-6xl">
-              {company.tagline}
+              {s.tagline}
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-primary-foreground/80">
-              {company.description}
+              {s.description}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -52,7 +58,7 @@ function Index() {
                 to="/services"
                 className="inline-flex items-center gap-2 rounded-md border border-primary-foreground/30 px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-foreground/10"
               >
-                Our Services
+                {s.hero_secondary_cta}
               </Link>
             </div>
           </div>
@@ -63,23 +69,23 @@ function Index() {
         <div className="mb-12 flex flex-col items-start gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-widest text-accent-teal">
-              What we supply
+              {s.focus_eyebrow}
             </p>
-            <h2 className="mt-2 text-3xl font-bold md:text-4xl">Our Trading Focus Areas</h2>
+            <h2 className="mt-2 text-3xl font-bold md:text-4xl">{s.focus_heading}</h2>
           </div>
           <p className="max-w-md text-muted-foreground">
-            Six specialist categories, one accountable supplier — from bridge to berth to below the waterline.
+            {s.focus_subheading}
           </p>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {focusAreas.map((f) => (
             <article
-              key={f.slug}
+              key={f.id}
               className="group overflow-hidden rounded-xl border border-border bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
             >
               <div className="relative aspect-[4/3] overflow-hidden">
                 <img
-                  src={f.image}
+                  src={f.image_url}
                   alt={f.title}
                   loading="lazy"
                   width={1280}
@@ -91,7 +97,7 @@ function Index() {
                 <h3 className="text-xl font-bold text-primary">{f.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{f.blurb}</p>
                 <ul className="mt-4 space-y-1.5 text-sm">
-                  {f.items.map((i) => (
+                  {(f.items as string[]).map((i) => (
                     <li key={i} className="flex items-start gap-2">
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent-teal" />
                       <span>{i}</span>
@@ -108,15 +114,15 @@ function Index() {
         <div className="mx-auto max-w-7xl px-4 py-16 md:px-8">
           <div className="mb-10 max-w-2xl">
             <p className="text-sm font-semibold uppercase tracking-widest text-accent-teal">
-              Our Track Record
+              {s.track_record_eyebrow}
             </p>
             <h2 className="mt-2 text-3xl font-bold md:text-4xl">
-              Numbers that speak to our commitment and excellence in marine trading
+              {s.track_record_heading}
             </h2>
           </div>
           <div className="grid gap-8 md:grid-cols-3">
             {stats.map((s) => (
-              <div key={s.label} className="text-center md:text-left">
+              <div key={s.id} className="text-center md:text-left">
                 <div className="font-display text-5xl font-bold text-primary md:text-6xl">
                   {s.value}
                 </div>
@@ -131,17 +137,17 @@ function Index() {
       <section className="mx-auto max-w-7xl px-4 py-20 md:px-8">
         <div className="mb-12 max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-widest text-accent-teal">
-            Why choose us
+            {s.why_eyebrow}
           </p>
           <h2 className="mt-2 text-3xl font-bold md:text-4xl">
-            A supply partner your operations can trust
+            {s.why_heading}
           </h2>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {whyUs.map((w, i) => {
             const Icon = [Globe2, Ship, ShieldCheck, Wrench][i] ?? Wrench;
             return (
-              <div key={w.title} className="rounded-xl border border-border bg-card p-6">
+              <div key={w.id} className="rounded-xl border border-border bg-card p-6">
                 <span className="grid h-11 w-11 place-items-center rounded-md bg-primary/10 text-primary">
                   <Icon className="h-5 w-5" />
                 </span>
@@ -157,15 +163,15 @@ function Index() {
         <div className="mx-auto max-w-7xl px-4 py-20 md:px-8">
           <div className="mb-12 max-w-2xl">
             <p className="text-sm font-semibold uppercase tracking-widest text-accent-teal">
-              What clients say
+              {s.testimonials_eyebrow}
             </p>
             <h2 className="mt-2 text-3xl font-bold md:text-4xl">
-              Trusted by maritime operators
+              {s.testimonials_heading}
             </h2>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             {testimonials.map((t) => (
-              <figure key={t.author} className="rounded-xl border border-primary-foreground/10 bg-primary-foreground/5 p-6">
+              <figure key={t.id} className="rounded-xl border border-primary-foreground/10 bg-primary-foreground/5 p-6">
                 <blockquote className="text-primary-foreground/90">"{t.quote}"</blockquote>
                 <figcaption className="mt-4 text-sm text-primary-foreground/70">
                   <span className="font-semibold text-primary-foreground">{t.author}</span> · {t.company}
@@ -179,10 +185,8 @@ function Index() {
       <section className="mx-auto max-w-7xl px-4 py-20 md:px-8">
         <div className="flex flex-col items-start justify-between gap-6 rounded-2xl border border-border bg-secondary/50 p-10 md:flex-row md:items-center">
           <div>
-            <h2 className="text-2xl font-bold md:text-3xl">Need a quote for your next project?</h2>
-            <p className="mt-2 text-muted-foreground">
-              Send us your specification and we'll respond within one business day.
-            </p>
+            <h2 className="text-2xl font-bold md:text-3xl">{s.cta_heading}</h2>
+            <p className="mt-2 text-muted-foreground">{s.cta_body}</p>
           </div>
           <Link
             to="/contact"

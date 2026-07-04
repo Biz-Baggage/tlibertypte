@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -13,7 +14,9 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { company } from "@/content/site";
+import { siteContentQuery } from "@/lib/site-content";
+import { supabase } from "@/integrations/supabase/client";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -76,6 +79,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  loader: ({ context }) => context.queryClient.ensureQueryData(siteContentQuery),
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -86,8 +90,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Trillion Liberty Pte Ltd supplies marine, port, diving, industrial and control-system equipment across the region from Singapore.",
       },
-      { name: "author", content: company.name },
-      { property: "og:site_name", content: company.name },
+      { name: "author", content: "Trillion Liberty Pte Ltd" },
+      { property: "og:site_name", content: "Trillion Liberty Pte Ltd" },
       { property: "og:title", content: "Trillion Liberty — Marine & Port Equipment Suppliers" },
       {
         property: "og:description",
@@ -110,16 +114,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Organization",
-          name: company.name,
-          alternateName: company.shortName,
-          email: company.email,
-          telephone: company.phone,
+          name: "Trillion Liberty Pte Ltd",
+          alternateName: "T Liberty",
+          email: "industrial@tlibertypte.com",
+          telephone: "+65 9720 8465",
           address: {
             "@type": "PostalAddress",
             streetAddress: "30 Roberts Lane, #02-01",
             addressCountry: "SG",
           },
-          identifier: company.uen,
+          identifier: "201935886R",
         }),
       },
     ],
@@ -146,16 +150,29 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isAdmin = pathname.startsWith("/admin") || pathname.startsWith("/auth");
+
+  useEffect(() => {
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      router.invalidate();
+      if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+    });
+    return () => data.subscription.unsubscribe();
+  }, [router, queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>
       <div className="flex min-h-screen flex-col">
-        <Header />
+        {!isAdmin && <Header />}
         <main className="flex-1">
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
         </main>
-        <Footer />
+        {!isAdmin && <Footer />}
+        <Toaster />
       </div>
     </QueryClientProvider>
   );

@@ -1,58 +1,59 @@
 
-# Trillion Liberty PTE — Marine & Port Equipment Website
+# Admin Panel — Editable Website Content
 
-A multi-page marketing site inspired by mafjar.com, tailored to Trillion Liberty Pte Ltd.
+## What you'll get
+- A private `/admin` area, protected by login (email + password).
+- Every visible piece of content on the public site becomes editable from that panel: company details, hero, focus areas, stats, "why us", testimonials, services.
+- Content is stored in Lovable Cloud (managed database) instead of the hard-coded `src/content/site.ts`.
+- The public site reads the latest content on every page load.
 
-## Company info (baked into site)
-- Name: **Trillion Liberty Pte Ltd** (brand short: T Liberty)
-- Address: 30 Roberts Lane, #02-01, Singapore
-- UEN: 201935886R
-- Email: industrial@tlibertypte.com
-- Phone: +65 9720 8465
-- Positioning: Marine & Port equipment suppliers / solutions provider
+## Login credentials — important note
+You shared the admin password in chat. I will NOT hardcode it in the codebase (that would be visible to anyone with repo access and would leak it in git history). Instead:
 
-## Pages
-1. **Home (`/`)**
-   - Hero: tagline "Specialists in Marine & Port Trading Solutions", primary CTA "Request a Quote", secondary "Our Focus Areas"
-   - Featured Products carousel (5–6 items across focus areas)
-   - Track Record stats (Projects, Clients, 24/7 Support — placeholders until you send real numbers)
-   - Focus Areas grid (5 cards, see below)
-   - Testimonials carousel (generic placeholders, easy to swap)
-   - Why Choose Us (Global Sourcing / On-Time Delivery / Certified & Compliant / Tailored Solutions)
-   - Footer CTA band
-2. **About (`/about`)** — company story, mission, values, UEN + registered address
-3. **Services (`/services`)** — supply, sourcing, logistics, maintenance, custom control-panel design
-4. **Contact (`/contact`)** — full contact block + inquiry / quote request form (client-side, submits to a mailto or a stub handler until Cloud is enabled)
+1. I'll enable Lovable Cloud and create the admin account **once** using a one-time server seed that reads the password from a secure secret, then immediately clears it.
+2. The email `contact@tlibertypte.com` becomes the admin login.
+3. After the first seed run you can change the password anytime from the admin panel's "Account" screen. Please rotate it soon since it was shared in plain chat.
 
-Shared: sticky header with logo + nav + "Request a Quote" button, footer with contact, focus areas, quick links, and copyright.
+## Pages / features
 
-## Focus Areas (5)
-- **Marine Equipment** — Engines & Spare Parts, Navigation & Communication, Safety & Life-Saving Appliances, Electrical & Mechanical Systems
-- **Port Equipment** — Cargo & Container Handling, Mooring & Dock Accessories, Terminal & Yard Infrastructure
-- **Diving Equipment** — Umbilical & ROV Cable, Control Panels & Video Systems, Personal Gear, Underwater Tools
-- **Industrial Support** — Welding & Fabrication Tools, PPE & Workwear, Fasteners & Hydraulic Hoses, Paints & Coatings
-- **Control Systems** — Power & Control Panels, ELV & Pump Control, Service & Maintenance, Custom Solution Design
+### Public site (unchanged look)
+- Home, About, Services, Contact — same as today, but text/images/lists come from the database.
 
-## Design direction
-Pending your logo upload. Once received I'll extract the brand colors and typography from it and build the palette around that (likely a maritime navy/steel base with an accent pulled from the logo). While waiting, I'll scaffold with a neutral navy palette and swap tokens once the logo is in.
+### Admin (behind login)
+- `/auth` — sign-in page (email + password, "forgot password" link).
+- `/admin` — dashboard overview.
+- `/admin/company` — name, tagline, description, email, phone, address, UEN.
+- `/admin/home` — hero heading/subheading/CTA + stats + why-us cards + testimonials.
+- `/admin/focus-areas` — add/edit/delete/reorder the 6 focus areas (title, blurb, bullet list, image).
+- `/admin/services` — add/edit/delete/reorder services.
+- `/admin/account` — change password, sign out.
 
-- Semantic tokens in `src/styles.css` (`--color-primary`, `--color-accent`, gradients, shadows)
-- Typography: strong industrial sans for headings + clean humanist sans for body (final pair chosen after logo)
-- Imagery: AI-generated hero + focus area photos (ships, cranes, divers, welding, control panels)
-- Motion: subtle scroll reveals + hero parallax via framer-motion
+Only users with the `admin` role can reach `/admin/*`. Non-admins are redirected to `/`.
 
-## Technical notes
-- TanStack Start file-based routes under `src/routes/`: `index.tsx`, `about.tsx`, `services.tsx`, `contact.tsx`
-- Per-route `head()` metadata (title, description, og:*, canonical)
-- JSON-LD Organization schema in `__root.tsx`
-- shadcn/ui components (Button, Card, Input, Textarea, Carousel, Accordion)
-- All content authored in one central `src/content/site.ts` file so text/stats/testimonials are easy for you to edit later
-- No backend needed for v1; contact form uses `mailto:industrial@tlibertypte.com`. If you'd like real form submissions later, we can enable Lovable Cloud and store leads.
+## Data model (Lovable Cloud tables)
+- `site_settings` — one row: company info + home hero fields.
+- `focus_areas` — id, slug, title, blurb, image_url, items (json array), sort_order.
+- `services` — id, title, body, sort_order.
+- `stats` — id, value, label, note, sort_order.
+- `why_us` — id, title, body, sort_order.
+- `testimonials` — id, quote, author, company, sort_order.
+- `user_roles` — separate table storing `admin` / `user` roles (per security best practice — never on profiles).
+- Image uploads go to Lovable Cloud storage; the URL is saved in the row.
 
-## What I still need from you
-1. **Your logo** (attach it in the next message) — drives colors + typography
-2. Optional: real stats (years in business, projects completed, clients served)
-3. Optional: any real client testimonials/logos to feature
-4. Optional: any hero photography you own (otherwise I'll generate)
+All tables have RLS: **public read** for site content (so the marketing site works for anonymous visitors) and **admin-only write**. `user_roles` is auth-only.
 
-Reply with the logo (and any of the optional items) and I'll implement the full site in one pass.
+## Technical notes (skip if not relevant)
+- Auth: Supabase email/password via Lovable Cloud. Role check via a `has_role(uuid, app_role)` security-definer function used in RLS.
+- Public reads run through TanStack Start server functions using the anon key with public SELECT policies — no service-role in loaders.
+- Admin writes go through authenticated server functions (`requireSupabaseAuth`) that verify `has_role(userId, 'admin')` before touching data.
+- Existing `src/content/site.ts` gets replaced by DB fetchers; a migration seeds the current content so nothing visually changes on day one.
+- Admin UI uses shadcn Form + react-hook-form + zod validation.
+
+## What I need from you before I build
+
+1. **Confirm** you're OK with me enabling Lovable Cloud (adds managed database + auth + storage — no external accounts).
+2. **Confirm** the seed approach: I create the admin user once from a temporary secret, then you rotate the password from the admin panel.
+3. Should I include **password reset via email** (recommended) so you can recover if you forget?
+4. Any other users besides `contact@tlibertypte.com` who need admin access now, or just you?
+
+Reply "go" (plus answers to 3 & 4) and I'll build the whole thing in one pass.

@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { company } from "@/content/site";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { siteContentQuery } from "@/lib/site-content";
 import logo from "@/assets/logo.png.asset.json";
 
 const nav = [
@@ -13,11 +14,13 @@ const nav = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const { data } = useSuspenseQuery(siteContentQuery);
+  const companyName = data.settings?.company_name ?? "Trillion Liberty";
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8">
-        <Link to="/" className="flex items-center gap-3" aria-label={company.name}>
-          <img src={logo.url} alt={company.name} className="h-10 w-auto md:h-11" />
+        <Link to="/" className="flex items-center gap-3" aria-label={companyName}>
+          <img src={logo.url} alt={companyName} className="h-10 w-auto md:h-11" />
           <span className="hidden text-xs font-medium uppercase tracking-widest text-muted-foreground sm:inline">
             Marine & Port
           </span>
@@ -35,6 +38,12 @@ export function Header() {
               {n.label}
             </Link>
           ))}
+          <Link
+            to="/auth"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+          >
+            Admin
+          </Link>
         </nav>
 
         <button
@@ -62,6 +71,13 @@ export function Header() {
                 {n.label}
               </Link>
             ))}
+            <Link
+              to="/auth"
+              onClick={() => setOpen(false)}
+              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary"
+            >
+              Admin
+            </Link>
           </div>
         </div>
       )}
