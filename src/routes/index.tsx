@@ -68,7 +68,7 @@ function Index() {
             <h2 className="mt-2 text-3xl font-bold md:text-4xl">Our Trading Focus Areas</h2>
           </div>
           <p className="max-w-md text-muted-foreground">
-            Five specialist categories, one accountable supplier — from bridge to berth to below the waterline.
+            Six specialist categories, one accountable supplier — from bridge to berth to below the waterline.
           </p>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -105,16 +105,26 @@ function Index() {
       </section>
 
       <section className="bg-secondary/60">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 md:grid-cols-3 md:px-8">
-          {stats.map((s) => (
-            <div key={s.label} className="text-center md:text-left">
-              <div className="font-display text-5xl font-bold text-primary md:text-6xl">
-                {s.value}
+        <div className="mx-auto max-w-7xl px-4 py-16 md:px-8">
+          <div className="mb-10 max-w-2xl">
+            <p className="text-sm font-semibold uppercase tracking-widest text-accent-teal">
+              Our Track Record
+            </p>
+            <h2 className="mt-2 text-3xl font-bold md:text-4xl">
+              Numbers that speak to our commitment and excellence in marine trading
+            </h2>
+          </div>
+          <div className="grid gap-8 md:grid-cols-3">
+            {stats.map((s) => (
+              <div key={s.label} className="text-center md:text-left">
+                <div className="font-display text-5xl font-bold text-primary md:text-6xl">
+                  {s.value}
+                </div>
+                <h3 className="mt-2 text-lg font-semibold">{s.label}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{s.note}</p>
               </div>
-              <h3 className="mt-2 text-lg font-semibold">{s.label}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{s.note}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
