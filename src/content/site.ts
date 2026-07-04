@@ -4,6 +4,7 @@ import portImg from "@/assets/port-equipment.jpg";
 import divingImg from "@/assets/diving-equipment.jpg";
 import industrialImg from "@/assets/industrial-support.jpg";
 import controlImg from "@/assets/control-systems.jpg";
+import shipRepairImg from "@/assets/ship-repair.jpg";
 
 export const company = {
   name: "Trillion Liberty Pte Ltd",
@@ -79,6 +80,18 @@ export const focusAreas = [
       "ELV & Pump Control Systems",
       "Service & Maintenance",
       "Custom Solution Design",
+    ],
+  },
+  {
+    slug: "ship-repair",
+    title: "Ship Repair & Dry Dock",
+    image: shipRepairImg,
+    blurb: "On-site repair, dry-dock support and turnaround services for vessels of every class.",
+    items: [
+      "Hull & Structural Repair",
+      "Dry-Dock Project Support",
+      "Voyage & Riding Repair Teams",
+      "Class-Compliant Surveys",
     ],
   },
 ];

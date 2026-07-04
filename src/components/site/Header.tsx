@@ -39,12 +39,6 @@ export function Header() {
               {n.label}
             </Link>
           ))}
-          <Link
-            to="/contact"
-            className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Request a Quote
-          </Link>
         </nav>
 
         <button
@@ -72,13 +66,6 @@ export function Header() {
                 {n.label}
               </Link>
             ))}
-            <Link
-              to="/contact"
-              onClick={() => setOpen(false)}
-              className="mt-2 rounded-md bg-primary px-3 py-2 text-center text-sm font-semibold text-primary-foreground"
-            >
-              Request a Quote
-            </Link>
           </div>
         </div>
       )}
