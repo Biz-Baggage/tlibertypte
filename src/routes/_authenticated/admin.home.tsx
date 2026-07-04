@@ -29,6 +29,7 @@ import {
   DangerButton,
   inputCls,
 } from "@/components/admin/AdminUI";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 export const Route = createFileRoute("/_authenticated/admin/home")({
   loader: ({ context }) => context.queryClient.ensureQueryData(siteContentQuery),
@@ -97,9 +98,14 @@ function HeadingsForm({
       <Card>
         <h2 className="mb-4 text-lg font-semibold">Hero & section headings</h2>
         <div className="grid gap-4 md:grid-cols-2">
-          <Field label="Hero image URL" className="md:col-span-2" hint="Path served from the site, or a full URL">
-            <input className={inputCls} value={form.hero_image_url} onChange={(e) => set("hero_image_url", e.target.value)} />
-          </Field>
+          <div className="md:col-span-2">
+            <ImageUpload
+              label="Hero image"
+              hint="Shown on the home page hero. Landscape orientation recommended."
+              value={form.hero_image_url}
+              onChange={(url) => set("hero_image_url", url)}
+            />
+          </div>
           <Field label="Hero eyebrow text">
             <input className={inputCls} value={form.hero_eyebrow} onChange={(e) => set("hero_eyebrow", e.target.value)} />
           </Field>
