@@ -92,7 +92,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { name: "author", content: "Trillion Liberty Pte Ltd" },
       { property: "og:site_name", content: "Trillion Liberty Pte Ltd" },
-      { property: "og:title", content: "Trillion Liberty — Marine & Port Equipment Suppliers" },
+      { property: "og:title", content: "Trillion Liberty — Marine & Port Equipment Suppliers Singapore" },
       {
         property: "og:description",
         content:
@@ -100,6 +100,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Trillion Liberty — Marine & Port Equipment Suppliers Singapore" },
+      { name: "description", content: "Marine, port, diving, industrial and control-system equipment supplied globally from Singapore. Request a quote from Trillion Liberty Pte Ltd." },
+      { property: "og:description", content: "Marine, port, diving, industrial and control-system equipment supplied globally from Singapore. Request a quote from Trillion Liberty Pte Ltd." },
+      { name: "twitter:description", content: "Marine, port, diving, industrial and control-system equipment supplied globally from Singapore. Request a quote from Trillion Liberty Pte Ltd." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ac70ea11-6e12-49a3-93bb-d4e763c69fb5/id-preview-36661d06--6d2f1e92-cc7d-4b0f-83a9-4ea3e8eb1e99.lovable.app-1783166148476.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ac70ea11-6e12-49a3-93bb-d4e763c69fb5/id-preview-36661d06--6d2f1e92-cc7d-4b0f-83a9-4ea3e8eb1e99.lovable.app-1783166148476.png" },
     ],
     links: [
       {
