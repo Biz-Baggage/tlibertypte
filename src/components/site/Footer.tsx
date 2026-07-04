@@ -2,19 +2,20 @@ import { Link } from "@tanstack/react-router";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { siteContentQuery } from "@/lib/site-content";
-import logo from "@/assets/logo.png.asset.json";
+import defaultLogo from "@/assets/logo.png.asset.json";
 
 export function Footer() {
   const { data } = useSuspenseQuery(siteContentQuery);
   const s = data.settings;
   const focusAreas = data.focusAreas;
   if (!s) return null;
+  const logoSrc = s.logo_url?.trim() || defaultLogo.url;
   return (
     <footer className="mt-24 bg-primary text-primary-foreground">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-4 md:px-8">
         <div>
           <img
-            src={logo.url}
+            src={logoSrc}
             alt={s.company_name}
             className="h-11 w-auto brightness-0 invert"
           />
