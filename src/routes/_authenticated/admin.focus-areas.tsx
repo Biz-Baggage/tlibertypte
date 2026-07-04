@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { siteContentQuery, type FocusArea } from "@/lib/site-content";
 import { upsertFocusArea, deleteFocusArea } from "@/lib/site-content.functions";
 import { Card, Field, PageHeader, SecondaryButton, DangerButton, inputCls } from "@/components/admin/AdminUI";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 export const Route = createFileRoute("/_authenticated/admin/focus-areas")({
   loader: ({ context }) => context.queryClient.ensureQueryData(siteContentQuery),
@@ -91,14 +92,12 @@ function FocusAreasAdmin() {
       <div className="space-y-6">
         {drafts.map((d, i) => (
           <Card key={d.id ?? `new-${i}`}>
-            <div className="grid gap-4 md:grid-cols-[160px_1fr]">
-              {d.image_url ? (
-                <img src={d.image_url} alt="" className="h-40 w-full rounded-md object-cover" />
-              ) : (
-                <div className="grid h-40 w-full place-items-center rounded-md bg-secondary text-xs text-muted-foreground">
-                  No image
-                </div>
-              )}
+            <div className="space-y-4">
+              <ImageUpload
+                label="Card image"
+                value={d.image_url}
+                onChange={(url) => set(i, { image_url: url })}
+              />
               <div className="grid gap-3 md:grid-cols-2">
                 <Field label="Title">
                   <input className={inputCls} value={d.title} onChange={(e) => set(i, { title: e.target.value })} />
@@ -108,9 +107,6 @@ function FocusAreasAdmin() {
                 </Field>
                 <Field label="Blurb" className="md:col-span-2">
                   <textarea rows={2} className={inputCls} value={d.blurb} onChange={(e) => set(i, { blurb: e.target.value })} />
-                </Field>
-                <Field label="Image URL" className="md:col-span-2" hint="A relative site path (/images/...) or full URL">
-                  <input className={inputCls} value={d.image_url} onChange={(e) => set(i, { image_url: e.target.value })} />
                 </Field>
                 <Field label="Bullet list (one per line)" className="md:col-span-2">
                   <textarea
