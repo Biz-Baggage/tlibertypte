@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Anchor, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { company } from "@/content/site";
+import logo from "@/assets/logo.png.asset.json";
 
 const nav = [
   { to: "/", label: "Home" },
@@ -15,15 +16,10 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8">
-        <Link to="/" className="flex items-center gap-2 font-display text-lg font-bold text-primary">
-          <span className="grid h-9 w-9 place-items-center rounded-md bg-primary text-primary-foreground">
-            <Anchor className="h-5 w-5" />
-          </span>
-          <span className="leading-tight">
-            {company.shortName}
-            <span className="ml-1 hidden text-xs font-normal text-muted-foreground sm:inline">
-              · Marine & Port
-            </span>
+        <Link to="/" className="flex items-center gap-3" aria-label={company.name}>
+          <img src={logo.url} alt={company.name} className="h-10 w-auto md:h-11" />
+          <span className="hidden text-xs font-medium uppercase tracking-widest text-muted-foreground sm:inline">
+            Marine & Port
           </span>
         </Link>
 

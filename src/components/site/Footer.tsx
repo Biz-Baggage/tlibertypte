@@ -1,18 +1,18 @@
 import { Link } from "@tanstack/react-router";
-import { Anchor, Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { company, focusAreas } from "@/content/site";
+import logo from "@/assets/logo.png.asset.json";
 
 export function Footer() {
   return (
     <footer className="mt-24 bg-primary text-primary-foreground">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-4 md:px-8">
         <div>
-          <div className="flex items-center gap-2 font-display text-lg font-bold">
-            <span className="grid h-9 w-9 place-items-center rounded-md bg-primary-foreground/10">
-              <Anchor className="h-5 w-5" />
-            </span>
-            {company.shortName}
-          </div>
+          <img
+            src={logo.url}
+            alt={company.name}
+            className="h-11 w-auto brightness-0 invert"
+          />
           <p className="mt-3 text-sm text-primary-foreground/70">
             {company.name}. Marine & port equipment supply, sourcing and control-system solutions.
           </p>
