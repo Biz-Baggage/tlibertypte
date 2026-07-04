@@ -14,16 +14,286 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      focus_areas: {
+        Row: {
+          blurb: string
+          created_at: string
+          id: string
+          image_url: string
+          items: Json
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          blurb: string
+          created_at?: string
+          id?: string
+          image_url: string
+          items?: Json
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          blurb?: string
+          created_at?: string
+          id?: string
+          image_url?: string
+          items?: Json
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          about_body: string
+          address: string
+          company_name: string
+          cta_body: string
+          cta_heading: string
+          description: string
+          domain: string
+          email: string
+          focus_eyebrow: string
+          focus_heading: string
+          focus_subheading: string
+          hero_eyebrow: string
+          hero_secondary_cta: string
+          id: string
+          phone: string
+          phone_href: string
+          services_body: string
+          services_intro: string
+          short_name: string
+          tagline: string
+          testimonials_eyebrow: string
+          testimonials_heading: string
+          track_record_eyebrow: string
+          track_record_heading: string
+          uen: string
+          updated_at: string
+          why_eyebrow: string
+          why_heading: string
+        }
+        Insert: {
+          about_body?: string
+          address: string
+          company_name: string
+          cta_body?: string
+          cta_heading?: string
+          description: string
+          domain: string
+          email: string
+          focus_eyebrow?: string
+          focus_heading?: string
+          focus_subheading?: string
+          hero_eyebrow?: string
+          hero_secondary_cta?: string
+          id?: string
+          phone: string
+          phone_href: string
+          services_body?: string
+          services_intro?: string
+          short_name: string
+          tagline: string
+          testimonials_eyebrow?: string
+          testimonials_heading?: string
+          track_record_eyebrow?: string
+          track_record_heading?: string
+          uen: string
+          updated_at?: string
+          why_eyebrow?: string
+          why_heading?: string
+        }
+        Update: {
+          about_body?: string
+          address?: string
+          company_name?: string
+          cta_body?: string
+          cta_heading?: string
+          description?: string
+          domain?: string
+          email?: string
+          focus_eyebrow?: string
+          focus_heading?: string
+          focus_subheading?: string
+          hero_eyebrow?: string
+          hero_secondary_cta?: string
+          id?: string
+          phone?: string
+          phone_href?: string
+          services_body?: string
+          services_intro?: string
+          short_name?: string
+          tagline?: string
+          testimonials_eyebrow?: string
+          testimonials_heading?: string
+          track_record_eyebrow?: string
+          track_record_heading?: string
+          uen?: string
+          updated_at?: string
+          why_eyebrow?: string
+          why_heading?: string
+        }
+        Relationships: []
+      }
+      stats: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          note: string
+          sort_order: number
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          note: string
+          sort_order?: number
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          note?: string
+          sort_order?: number
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          author: string
+          company: string
+          created_at: string
+          id: string
+          quote: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          author: string
+          company: string
+          created_at?: string
+          id?: string
+          quote: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          company?: string
+          created_at?: string
+          id?: string
+          quote?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      why_us: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_admin_role: { Args: never; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +420,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
