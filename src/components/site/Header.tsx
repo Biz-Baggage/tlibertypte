@@ -39,12 +39,6 @@ export function Header() {
               {n.label}
             </Link>
           ))}
-          <Link
-            to="/auth"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-          >
-            Admin
-          </Link>
         </nav>
 
         <button
@@ -72,13 +66,6 @@ export function Header() {
                 {n.label}
               </Link>
             ))}
-            <Link
-              to="/auth"
-              onClick={() => setOpen(false)}
-              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary"
-            >
-              Admin
-            </Link>
           </div>
         </div>
       )}
