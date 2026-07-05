@@ -13,7 +13,7 @@ const SIGNED_URL_TTL_SECONDS = 60 * 60 * 24 * 365 * 10;
 
 export const uploadSiteImage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => uploadSchema.parse(d))
+  .validator((d: unknown) => uploadSchema.parse(d))
   .handler(async ({ data, context }) => {
     // Verify caller is admin (server-side, using the user-scoped client).
     const { data: isAdmin, error: rerr } = await context.supabase.rpc("has_role", {
