@@ -1,35 +1,24 @@
-# Add Vercel deployment support
+## Next steps
 
-The project's Nitro build currently targets Cloudflare Workers by default (and has a `build:node` variant for cPanel). Vercel needs its own preset so Nitro emits the `.vercel/output/` directory Vercel expects. Without it, Vercel treats the repo as a plain Vite SPA, so the SSR server never runs and server functions (admin, image upload, site content) fail at runtime.
+The deprecation warnings are fixed in code. Two things remain:
 
-## Changes
+### 1. Redeploy on Vercel (required)
+Trigger a new deployment so the fix (and any env-var changes you made) take effect:
+- Vercel → your project → **Deployments** → latest → **⋯ → Redeploy**, or
+- push any commit / click "Deploy" again.
 
-1. **`package.json`** — add a `build:vercel` script:
-   ```
-   "build:vercel": "NITRO_PRESET=vercel vite build"
-   ```
+Make sure these env vars are set in **Settings → Environment Variables** (Production + Preview) before redeploying:
+- `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_PROJECT_ID`
+- `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
 
-2. **`vercel.json`** (new, repo root) — tell Vercel to use that script and serve Nitro's output:
-   ```json
-   {
-     "buildCommand": "bun run build:vercel",
-     "installCommand": "bun install",
-     "outputDirectory": ".vercel/output",
-     "framework": null
-   }
-   ```
+### 2. Chunk-size warning (optional, cosmetic)
+The `chunks larger than 500 kB` message is a **warning, not an error** — the build succeeds. Options:
+- **Ignore it** (recommended for now — it doesn't block deploy).
+- **Silence it** by raising `build.chunkSizeWarningLimit` in `vite.config.ts` to e.g. 1000.
+- **Actually reduce bundle size** via dynamic `import()` on heavy admin routes — bigger change, more risk.
 
-3. **`DEPLOY-VERCEL.md`** (new) — short guide covering:
-   - Import repo in Vercel
-   - Required env vars (same set as cPanel: `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, plus the `VITE_SUPABASE_*` public vars)
-   - Node version note (Vercel auto-detects; 20+ is fine)
-   - Troubleshooting: blank page or 404 on refresh = wrong preset (Vercel picked SPA instead of running `build:vercel`); 500 on admin image upload = missing `SUPABASE_SERVICE_ROLE_KEY`
-
-## Not changing
-
-- Cloudflare (Lovable Publish) and cPanel (`build:node` + `app.js`) paths stay intact.
-- No code changes to routes, server functions, or Supabase integration — only build target and docs.
-
-## Note on the screenshot
-
-The lines you saw (`[plugin tanstack-start-core::server-fn:ssr] …?tss-serverfn-split`) are **informational**, not errors. The actual failure is almost certainly that Vercel ran the default Vite build (SPA output) instead of the Nitro server build, so hitting the site produces a 404 or blank page. The `build:vercel` script + `vercel.json` above fix that. If after redeploying you still see an error, paste the red error line from the Vercel build log and I'll adjust.
+### What I need from you
+Tell me which you want:
+- **A**: Just redeploy — nothing more to change in code.
+- **B**: Also silence the chunk warning (raise the limit).
+- **C**: Also code-split the admin routes to shrink the main bundle.
