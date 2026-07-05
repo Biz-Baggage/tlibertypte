@@ -1,31 +1,35 @@
-You don't need a code change to get those two files — they already exist in the project. Here are the ways to grab them, easiest first:
+# Add Vercel deployment support
 
-## Option 1: Copy from the Lovable Code Editor (fastest)
+The project's Nitro build currently targets Cloudflare Workers by default (and has a `build:node` variant for cPanel). Vercel needs its own preset so Nitro emits the `.vercel/output/` directory Vercel expects. Without it, Vercel treats the repo as a plain Vite SPA, so the SSR server never runs and server functions (admin, image upload, site content) fail at runtime.
 
-1. In Lovable, click the **`</>` Code Editor** toggle (top-left of the editor).
-2. In the file tree, open:
-   - `DEPLOY-CPANEL.md` (project root)
-   - `package.json` (project root)
-3. Select all → copy → paste into a local file with the same name.
+## Changes
 
-## Option 2: Download the whole codebase as ZIP (paid workspace)
-
-1. Open the Code Editor.
-2. Scroll to the bottom of the file tree sidebar.
-3. Click **Download codebase**.
-4. Unzip — both files are in the root.
-
-## Option 3: Via GitHub (best for cPanel, since you'll redeploy from git)
-
-1. Chat input **+** menu → **GitHub** → **Connect project** → authorize → **Create Repository**.
-2. On your machine or cPanel server:
-   ```bash
-   git clone https://github.com/YOUR-ORG/YOUR-REPO.git
+1. **`package.json`** — add a `build:vercel` script:
    ```
-3. Both files are at the repo root, and future Lovable edits auto-push so you can `git pull` on cPanel to redeploy.
+   "build:vercel": "NITRO_PRESET=vercel vite build"
+   ```
 
-## Option 4: I paste the file contents into chat
+2. **`vercel.json`** (new, repo root) — tell Vercel to use that script and serve Nitro's output:
+   ```json
+   {
+     "buildCommand": "bun run build:vercel",
+     "installCommand": "bun install",
+     "outputDirectory": ".vercel/output",
+     "framework": null
+   }
+   ```
 
-If none of the above work for you (e.g. free plan, no GitHub), approve this plan and switch me to build mode — I'll print the full contents of `package.json` and `DEPLOY-CPANEL.md` in chat so you can copy-paste them into local files. No code changes will be made.
+3. **`DEPLOY-VERCEL.md`** (new) — short guide covering:
+   - Import repo in Vercel
+   - Required env vars (same set as cPanel: `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, plus the `VITE_SUPABASE_*` public vars)
+   - Node version note (Vercel auto-detects; 20+ is fine)
+   - Troubleshooting: blank page or 404 on refresh = wrong preset (Vercel picked SPA instead of running `build:vercel`); 500 on admin image upload = missing `SUPABASE_SERVICE_ROLE_KEY`
 
-**Recommendation:** Use Option 3 (GitHub) since you're deploying to cPanel — it's also how the `DEPLOY-CPANEL.md` guide expects you to pull updates.
+## Not changing
+
+- Cloudflare (Lovable Publish) and cPanel (`build:node` + `app.js`) paths stay intact.
+- No code changes to routes, server functions, or Supabase integration — only build target and docs.
+
+## Note on the screenshot
+
+The lines you saw (`[plugin tanstack-start-core::server-fn:ssr] …?tss-serverfn-split`) are **informational**, not errors. The actual failure is almost certainly that Vercel ran the default Vite build (SPA output) instead of the Nitro server build, so hitting the site produces a 404 or blank page. The `build:vercel` script + `vercel.json` above fix that. If after redeploying you still see an error, paste the red error line from the Vercel build log and I'll adjust.
