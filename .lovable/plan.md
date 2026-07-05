@@ -1,31 +1,27 @@
-## Issue
+## The situation
 
-The deployed site on Vercel is throwing `SUPABASE_SERVICE_ROLE_KEY missing` when the admin image upload runs. This is a **Vercel environment configuration issue**, not a code bug — the key exists in Lovable Cloud but has not been copied into your Vercel project.
+`SUPABASE_SERVICE_ROLE_KEY` is a privileged backend secret. On Lovable Cloud it is managed internally and **not shown to you** — there is no `.env` file you can open to read it, and I can't display it here either. It only exists inside Lovable's backend runtime, which is why the app works in the Lovable preview but fails on Vercel.
 
-## What to do
+This means the current admin image upload code path (which uses the service role to bypass RLS) **cannot run on Vercel** as-is.
 
-Add the service role key to Vercel:
+## Two ways forward
 
-1. Open **Vercel → your project → Settings → Environment Variables**.
-2. Add a new variable:
-   - **Name:** `SUPABASE_SERVICE_ROLE_KEY`
-   - **Value:** the service role key from your local `.env` file (the `SUPABASE_SERVICE_ROLE_KEY=…` line)
-   - **Environments:** check Production, Preview, and Development
-3. Save.
-4. Go to **Deployments → latest deployment → ⋯ → Redeploy** and uncheck "Use existing Build Cache".
+### Option A — Remove the need for the service role on Vercel (recommended)
 
-## While you're there — verify these are also set
+Rewrite the admin image upload so it uses the **signed-in admin's own session** instead of the service role. Concretely:
 
-The site also needs these on Vercel (from the earlier fix):
+1. Change `src/lib/site-image.functions.ts` to upload with `context.supabase` (the user-scoped client from `requireSupabaseAuth`) instead of `supabaseAdmin`.
+2. Add Storage RLS policies on the `site-images` bucket that allow `INSERT` and `SELECT` when `public.has_role(auth.uid(), 'admin')` is true.
+3. Deploy — no service role key needed on Vercel.
 
-- `SUPABASE_URL`
-- `SUPABASE_PUBLISHABLE_KEY`
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_PUBLISHABLE_KEY`
-- `VITE_SUPABASE_PROJECT_ID`
+Trade-off: uploads are gated by the admin's session + storage policies rather than by a server-only key. Functionally identical for your admin-only use case.
 
-If any are missing, add them from the same `.env` file before redeploying.
+### Option B — Stay on Lovable hosting
 
-## Why no code change
+Keep using the published Lovable URL (`tlibertypte.lovable.app` or your custom domain pointed at it) instead of Vercel. Everything already works there because Lovable Cloud injects the service role key at runtime.
 
-`SUPABASE_SERVICE_ROLE_KEY` is a server-only secret used by the admin image upload server function. Lovable already stores it in the backend, but Vercel is a separate host and needs its own copy in its env-var settings. There is nothing to change in the repo.
+## Recommendation
+
+Go with **Option A**. It's a small, contained change (one server function + one migration adding two storage policies) and removes the Vercel deployment blocker permanently.
+
+Reply with **A** or **B** and I'll implement it.
