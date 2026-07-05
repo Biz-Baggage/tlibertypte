@@ -102,7 +102,7 @@ const settingsUpdateSchema = z.object({
 
 export const updateSiteSettings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => settingsUpdateSchema.parse(d))
+  .validator((d: unknown) => settingsUpdateSchema.parse(d))
   .handler(async ({ data, context }) => {
     await requireAdmin(context);
     const { data: existing } = await context.supabase
@@ -133,7 +133,7 @@ const focusAreaSchema = z.object({
 
 export const upsertFocusArea = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => focusAreaSchema.parse(d))
+  .validator((d: unknown) => focusAreaSchema.parse(d))
   .handler(async ({ data, context }) => {
     await requireAdmin(context);
     const row = { ...data, items: data.items };
@@ -146,7 +146,7 @@ export const upsertFocusArea = createServerFn({ method: "POST" })
 
 export const deleteFocusArea = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await requireAdmin(context);
     const { error } = await context.supabase.from("focus_areas").delete().eq("id", data.id);
@@ -165,7 +165,7 @@ const serviceSchema = z.object({
 
 export const upsertService = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => serviceSchema.parse(d))
+  .validator((d: unknown) => serviceSchema.parse(d))
   .handler(async ({ data, context }) => {
     await requireAdmin(context);
     const { error } = data.id
@@ -177,7 +177,7 @@ export const upsertService = createServerFn({ method: "POST" })
 
 export const deleteService = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await requireAdmin(context);
     const { error } = await context.supabase.from("services").delete().eq("id", data.id);
@@ -197,7 +197,7 @@ const statSchema = z.object({
 
 export const upsertStat = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => statSchema.parse(d))
+  .validator((d: unknown) => statSchema.parse(d))
   .handler(async ({ data, context }) => {
     await requireAdmin(context);
     const { error } = data.id
@@ -209,7 +209,7 @@ export const upsertStat = createServerFn({ method: "POST" })
 
 export const deleteStat = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await requireAdmin(context);
     const { error } = await context.supabase.from("stats").delete().eq("id", data.id);
@@ -228,7 +228,7 @@ const whyUsSchema = z.object({
 
 export const upsertWhyUs = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => whyUsSchema.parse(d))
+  .validator((d: unknown) => whyUsSchema.parse(d))
   .handler(async ({ data, context }) => {
     await requireAdmin(context);
     const { error } = data.id
@@ -240,7 +240,7 @@ export const upsertWhyUs = createServerFn({ method: "POST" })
 
 export const deleteWhyUs = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await requireAdmin(context);
     const { error } = await context.supabase.from("why_us").delete().eq("id", data.id);
@@ -260,7 +260,7 @@ const testimonialSchema = z.object({
 
 export const upsertTestimonial = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => testimonialSchema.parse(d))
+  .validator((d: unknown) => testimonialSchema.parse(d))
   .handler(async ({ data, context }) => {
     await requireAdmin(context);
     const { error } = data.id
@@ -272,7 +272,7 @@ export const upsertTestimonial = createServerFn({ method: "POST" })
 
 export const deleteTestimonial = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await requireAdmin(context);
     const { error } = await context.supabase.from("testimonials").delete().eq("id", data.id);
