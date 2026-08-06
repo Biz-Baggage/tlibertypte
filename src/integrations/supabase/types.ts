@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      documents: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          file_name: string | null
+          file_size: number | null
+          file_url: string
+          id: string
+          is_published: boolean
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          file_name?: string | null
+          file_size?: number | null
+          file_url: string
+          id?: string
+          is_published?: boolean
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          file_name?: string | null
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          is_published?: boolean
+          title?: string
+        }
+        Relationships: []
+      }
       focus_areas: {
         Row: {
           blurb: string
