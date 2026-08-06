@@ -6,6 +6,7 @@ import {
   Home as HomeIcon,
   Grid3x3,
   Wrench,
+  FileText,
   UserCircle2,
   LogOut,
   ExternalLink,
@@ -20,7 +21,14 @@ export const Route = createFileRoute("/_authenticated/admin")({
 });
 
 type NavItem = {
-  to: "/admin" | "/admin/company" | "/admin/home" | "/admin/focus-areas" | "/admin/services" | "/admin/account";
+  to:
+    | "/admin"
+    | "/admin/company"
+    | "/admin/home"
+    | "/admin/focus-areas"
+    | "/admin/services"
+    | "/admin/documents"
+    | "/admin/account";
   label: string;
   icon: typeof LayoutDashboard;
   exact?: boolean;
@@ -31,6 +39,7 @@ const nav: NavItem[] = [
   { to: "/admin/home", label: "Home page", icon: HomeIcon },
   { to: "/admin/focus-areas", label: "Focus areas", icon: Grid3x3 },
   { to: "/admin/services", label: "Services", icon: Wrench },
+  { to: "/admin/documents", label: "Documents", icon: FileText },
   { to: "/admin/account", label: "Account", icon: UserCircle2 },
 ];
 
