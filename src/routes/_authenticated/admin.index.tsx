@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Building2, Home as HomeIcon, Grid3x3, Wrench, UserCircle2 } from "lucide-react";
+import { Building2, Home as HomeIcon, Grid3x3, Wrench, FileText, UserCircle2 } from "lucide-react";
 import { siteContentQuery } from "@/lib/site-content";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
@@ -15,6 +15,7 @@ function Dashboard() {
     { to: "/admin/home", label: "Home page content", icon: HomeIcon, count: data.stats.length + data.whyUs.length + data.testimonials.length, note: "Headings, stats, testimonials" },
     { to: "/admin/focus-areas", label: "Focus areas", icon: Grid3x3, count: data.focusAreas.length, note: "Cards on home page" },
     { to: "/admin/services", label: "Services", icon: Wrench, count: data.services.length, note: "Services page entries" },
+    { to: "/admin/documents", label: "Documents", icon: FileText, count: 0, note: "PDF resources" },
     { to: "/admin/account", label: "Account", icon: UserCircle2, count: 0, note: "Password & sign out" },
   ] as const;
   return (
