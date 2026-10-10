@@ -17,7 +17,7 @@ export function Footer() {
           <img
             src={logoSrc}
             alt={s.company_name}
-            className="h-11 w-auto brightness-0 invert"
+            className="h-14 w-auto brightness-0 invert"
           />
           <p className="mt-3 text-sm text-primary-foreground/70">
             {s.company_name}. Marine & port equipment supply, sourcing and control-system solutions.

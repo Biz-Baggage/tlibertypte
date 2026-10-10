@@ -20,9 +20,9 @@ export function Header() {
   const logoSrc = data.settings?.logo_url?.trim() || defaultLogo.url;
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8">
-        <Link to="/" className="flex items-center gap-3" aria-label={companyName}>
-          <img src={logoSrc} alt={companyName} className="h-10 w-auto md:h-11" />
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:h-20 md:px-8">
+        <Link to="/" className="flex min-w-0 items-center gap-3" aria-label={companyName}>
+          <img src={logoSrc} alt={companyName} className="h-12 w-auto shrink-0 md:h-14" />
           <span className="hidden text-xs font-medium uppercase tracking-widest text-muted-foreground sm:inline">
             Marine & Port
           </span>
