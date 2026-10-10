@@ -119,7 +119,7 @@ function Index() {
                 We source reliable products from established brands for marine, port, and industrial operations.
               </p>
             </div>
-            <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+            <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
               {brands.map((b) => (
                 <li
                   key={b.id}
