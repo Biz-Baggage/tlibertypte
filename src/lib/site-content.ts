@@ -8,6 +8,7 @@ export type Service = Tables<"services">;
 export type Stat = Tables<"stats">;
 export type WhyUs = Tables<"why_us">;
 export type Testimonial = Tables<"testimonials">;
+export type Brand = Tables<"brands">;
 
 export type SiteContent = {
   settings: Settings | null;
@@ -16,6 +17,7 @@ export type SiteContent = {
   stats: Stat[];
   whyUs: WhyUs[];
   testimonials: Testimonial[];
+  brands: Brand[];
 };
 
 export const siteContentQuery = queryOptions({

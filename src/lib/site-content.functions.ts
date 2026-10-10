@@ -17,13 +17,14 @@ function publicClient() {
 
 export const getSiteContent = createServerFn({ method: "GET" }).handler(async () => {
   const sb = publicClient();
-  const [settings, focusAreas, services, stats, whyUs, testimonials] = await Promise.all([
+  const [settings, focusAreas, services, stats, whyUs, testimonials, brands] = await Promise.all([
     sb.from("site_settings").select("*").limit(1).maybeSingle(),
     sb.from("focus_areas").select("*").order("sort_order"),
     sb.from("services").select("*").order("sort_order"),
     sb.from("stats").select("*").order("sort_order"),
     sb.from("why_us").select("*").order("sort_order"),
     sb.from("testimonials").select("*").order("sort_order"),
+    sb.from("brands").select("*").order("sort_order"),
   ]);
   return {
     settings: settings.data,
@@ -32,6 +33,7 @@ export const getSiteContent = createServerFn({ method: "GET" }).handler(async ()
     stats: stats.data ?? [],
     whyUs: whyUs.data ?? [],
     testimonials: testimonials.data ?? [],
+    brands: brands.data ?? [],
   };
 });
 
@@ -276,6 +278,36 @@ export const deleteTestimonial = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await requireAdmin(context);
     const { error } = await context.supabase.from("testimonials").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+// ==================== BRANDS ====================
+
+const brandSchema = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string().min(1).max(200),
+  logo_url: z.string().max(2000),
+  sort_order: z.number().int().min(0).max(999),
+});
+
+export const upsertBrand = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((d: unknown) => brandSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await requireAdmin(context);
+    const { error } = data.id
+      ? await context.supabase.from("brands").update(data).eq("id", data.id)
+      : await context.supabase.from("brands").insert(data);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const deleteBrand = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await requireAdmin(context);
+    const { error } = await context.supabase.from("brands").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
