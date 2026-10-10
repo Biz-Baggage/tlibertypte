@@ -10,6 +10,7 @@ import {
   type Stat,
   type WhyUs,
   type Testimonial,
+  type Brand,
 } from "@/lib/site-content";
 import {
   updateSiteSettings,
@@ -19,6 +20,8 @@ import {
   deleteWhyUs,
   upsertTestimonial,
   deleteTestimonial,
+  upsertBrand,
+  deleteBrand,
 } from "@/lib/site-content.functions";
 import {
   Card,
@@ -50,6 +53,7 @@ function HomeAdmin() {
       />
       <HeadingsForm settings={data.settings} qc={qc} />
       <StatsSection items={data.stats} qc={qc} />
+      <BrandsSection items={data.brands} qc={qc} />
       <WhyUsSection items={data.whyUs} qc={qc} />
       <TestimonialsSection items={data.testimonials} qc={qc} />
     </div>
@@ -334,6 +338,62 @@ function TestimonialsSection({ items, qc }: { items: Testimonial[]; qc: ReturnTy
               value={t.quote ?? ""}
               onChange={(e) => setDrafts((d) => d.map((x, j) => (j === i ? { ...x, quote: e.target.value } : x)))}
             />
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+// ==================== BRANDS ====================
+function BrandsSection({ items, qc }: { items: Brand[]; qc: ReturnType<typeof useQueryClient> }) {
+  const upsert = useServerFn(upsertBrand);
+  const remove = useServerFn(deleteBrand);
+  const [drafts, setDrafts] = useState<Array<Partial<Brand>>>([]);
+  useEffect(() => setDrafts(items.map((i) => ({ ...i }))), [items]);
+  const patch = (i: number, p: Partial<Brand>) => setDrafts((d) => d.map((x, j) => (j === i ? { ...x, ...p } : x)));
+
+  async function save(d: Partial<Brand>, i: number) {
+    try {
+      await upsert({ data: { id: d.id, name: d.name ?? "", logo_url: d.logo_url ?? "", sort_order: d.sort_order ?? i } });
+      toast.success("Saved");
+      qc.invalidateQueries({ queryKey: siteContentQuery.queryKey });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Save failed");
+    }
+  }
+  async function del(id?: string) {
+    if (!id) return setDrafts((d) => d.filter((x) => x.id));
+    if (!confirm("Delete this brand?")) return;
+    try {
+      await remove({ data: { id } });
+      toast.success("Deleted");
+      qc.invalidateQueries({ queryKey: siteContentQuery.queryKey });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Delete failed");
+    }
+  }
+  return (
+    <Card>
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Brands We Supply</h2>
+        <SecondaryButton onClick={() => setDrafts((d) => [...d, { name: "", logo_url: "", sort_order: d.length + 1 }])}>
+          <Plus className="mr-1 h-3.5 w-3.5" /> Add brand
+        </SecondaryButton>
+      </div>
+      <div className="space-y-4">
+        {drafts.map((b, i) => (
+          <div key={b.id ?? `new-${i}`} className="rounded-lg border border-border p-3">
+            <div className="grid gap-3 md:grid-cols-[1fr_80px_auto]">
+              <input className={inputCls} placeholder="Brand name" value={b.name ?? ""} onChange={(e) => patch(i, { name: e.target.value })} />
+              <input type="number" className={inputCls} value={b.sort_order ?? 0} onChange={(e) => patch(i, { sort_order: Number(e.target.value) })} />
+              <div className="flex gap-2">
+                <SecondaryButton onClick={() => save(b, i)}>Save</SecondaryButton>
+                <DangerButton onClick={() => del(b.id)}><Trash2 className="h-3.5 w-3.5" /></DangerButton>
+              </div>
+            </div>
+            <div className="mt-3">
+              <ImageUpload label="Logo" hint="PNG/SVG with transparent background works best." value={b.logo_url ?? ""} onChange={(url) => patch(i, { logo_url: url })} />
+            </div>
           </div>
         ))}
       </div>

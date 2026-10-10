@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, CheckCircle2, Ship, Wrench, ShieldCheck, Globe2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, ImageIcon, Ship, Wrench, ShieldCheck, Globe2 } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { siteContentQuery } from "@/lib/site-content";
 
@@ -24,7 +24,7 @@ function Index() {
   const { data } = useSuspenseQuery(siteContentQuery);
   const s = data.settings;
   if (!s) return null;
-  const { focusAreas, stats, whyUs, testimonials } = data;
+  const { focusAreas, stats, whyUs, testimonials, brands } = data;
   return (
     <>
       <section className="relative isolate overflow-hidden bg-primary text-primary-foreground">
@@ -109,6 +109,39 @@ function Index() {
           ))}
         </div>
       </section>
+
+      {brands.length > 0 && (
+        <section aria-labelledby="brands-heading" className="border-t border-border bg-background">
+          <div className="mx-auto max-w-7xl px-4 py-20 md:px-8">
+            <div className="mb-12 max-w-2xl">
+              <h2 id="brands-heading" className="text-3xl font-bold md:text-4xl">Brands We Supply</h2>
+              <p className="mt-3 text-muted-foreground">
+                We source reliable products from established brands for marine, port, and industrial operations.
+              </p>
+            </div>
+            <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+              {brands.map((b) => (
+                <li
+                  key={b.id}
+                  className="flex h-full flex-col items-center rounded-lg border border-border bg-card p-4 text-center transition-colors hover:border-primary/40"
+                >
+                  <div className="flex h-20 w-full items-center justify-center">
+                    {b.logo_url ? (
+                      <img src={b.logo_url} alt={`${b.name} logo`} loading="lazy" className="h-full w-full object-contain" />
+                    ) : (
+                      <div className="flex h-full w-full flex-col items-center justify-center rounded border border-dashed border-border text-xs text-muted-foreground">
+                        <ImageIcon className="mb-1 h-5 w-5" aria-hidden="true" />
+                        Logo placeholder
+                      </div>
+                    )}
+                  </div>
+                  <p className="mt-3 break-words text-sm font-medium leading-snug">{b.name}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       <section className="bg-secondary/60">
         <div className="mx-auto max-w-7xl px-4 py-16 md:px-8">
